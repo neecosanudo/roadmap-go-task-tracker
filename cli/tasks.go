@@ -3,27 +3,31 @@ package cli
 import "fmt"
 
 type Task struct {
-	id          uint
-	description string
+	Id          uint
+	Description string
 }
 
 type UserTaskList struct {
-	counter uint
-	list    []*Task
+	Counter uint    `json:"counter"`
+	List    []*Task `json:"list"`
 }
 
 func (usertl *UserTaskList) CreateNewTask(description string) string {
-	usertl.counter++
-	newTask := &Task{
-		id:          usertl.counter,
-		description: description,
-	}
-	usertl.list = append(usertl.list, newTask)
+	usertl.Counter++
 
-	return fmt.Sprintf("Task added successfully (ID: %d)", newTask.id)
+	newTask := &Task{
+		Id:          usertl.Counter,
+		Description: description,
+	}
+
+	usertl.List = append(usertl.List, newTask)
+
+	UpdateFile(usertl)
+
+	return fmt.Sprintf("Task added successfully (ID: %d)", newTask.Id)
 }
 
-func CreateNewUserTaskList() *UserTaskList {
+func createNewUserTaskList() *UserTaskList {
 	return &UserTaskList{
 		0,
 		[]*Task{},
