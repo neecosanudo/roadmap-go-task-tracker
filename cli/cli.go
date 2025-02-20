@@ -14,39 +14,39 @@ func Reader(userTaskList *UserTaskList) string {
 		if len(args) != 2 {
 			return "invalid number of arguments"
 		}
-		return userTaskList.CreateNewTask(args[1])
+		return userTaskList.createNewTask(args[1])
 	case "list":
 		if len(args) == 1 {
-			return userTaskList.GetAllTasks()
+			return userTaskList.getAllTasks()
 		}
 		if len(args) == 2 {
 			status := assertNumberByStatus(args[1])
-			return userTaskList.GetAllTasksByStatus(status)
+			return userTaskList.getAllTasksByStatus(status)
 		}
 	case "delete":
 		if len(args) != 2 {
 			return "invalid number of arguments"
 		}
 		id := assertIdAsUint(args[1])
-		return userTaskList.DeleteTaskById(id)
+		return userTaskList.deleteTaskById(id)
 	case "update":
 		if len(args) != 3 {
 			return "invalid number of arguments"
 		}
 		id := assertIdAsUint(args[1])
-		return userTaskList.UpdateDescriptionTaskById(id, args[2])
+		return userTaskList.updateDescriptionTaskById(id, args[2])
 	case "mark-in-progress":
 		if len(args) != 2 {
 			return "invalid number of arguments"
 		}
 		id := assertIdAsUint(args[1])
-		return userTaskList.UpdateStatusTaskInto(id, STATUS_IN_PROGRESS)
+		return userTaskList.updateStatusTaskInto(id, STATUS_IN_PROGRESS)
 	case "mark-done":
 		if len(args) != 2 {
 			return "invalid number of arguments"
 		}
 		id := assertIdAsUint(args[1])
-		return userTaskList.UpdateStatusTaskInto(id, STATUS_DONE)
+		return userTaskList.updateStatusTaskInto(id, STATUS_DONE)
 	}
 
 	return "command not valid"

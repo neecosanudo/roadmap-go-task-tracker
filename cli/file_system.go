@@ -31,13 +31,13 @@ func CreateFile() error {
 		return err
 	}
 
-	UpdateFile(createNewUserTaskList())
+	updateFile(createNewUserTaskList())
 
 	file.Close()
 	return nil
 }
 
-func UpdateFile(userTaskList *UserTaskList) {
+func updateFile(userTaskList *UserTaskList) {
 
 	jsonData, err := json.Marshal(userTaskList)
 
@@ -57,7 +57,7 @@ func ReadFile() *UserTaskList {
 
 	data := &UserTaskList{}
 
-	json.Unmarshal(file, data)
+	err = json.Unmarshal(file, data)
 
 	return data
 }

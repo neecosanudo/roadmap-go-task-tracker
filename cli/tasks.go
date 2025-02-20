@@ -22,7 +22,7 @@ type UserTaskList struct {
 	List    []*Task `json:"list"`
 }
 
-func (usertl *UserTaskList) CreateNewTask(description string) string {
+func (usertl *UserTaskList) createNewTask(description string) string {
 	usertl.Counter++
 
 	newTask := &Task{
@@ -33,14 +33,14 @@ func (usertl *UserTaskList) CreateNewTask(description string) string {
 
 	usertl.List = append(usertl.List, newTask)
 
-	UpdateFile(usertl)
+	updateFile(usertl)
 
 	return fmt.Sprintf("Task added successfully (ID: %d)", newTask.Id)
 }
 
-func (usertl *UserTaskList) GetAllTasks() string {
+func (usertl *UserTaskList) getAllTasks() string {
 	var sb strings.Builder
-	sb.WriteString("Listing all tasks:\n")
+	sb.WriteString("Listing all tasks:\n\n")
 
 	for _, task := range usertl.List {
 		sb.WriteString(
@@ -51,7 +51,7 @@ func (usertl *UserTaskList) GetAllTasks() string {
 	return sb.String()
 }
 
-func (usertl *UserTaskList) GetTaskById(id uint) (*Task, int) {
+func (usertl *UserTaskList) getTaskById(id uint) (*Task, int) {
 
 	for i, task := range usertl.List {
 		if task.Id == id {
@@ -62,8 +62,8 @@ func (usertl *UserTaskList) GetTaskById(id uint) (*Task, int) {
 	return nil, 0
 }
 
-func (usertl *UserTaskList) DeleteTaskById(id uint) string {
-	task, index := usertl.GetTaskById(id)
+func (usertl *UserTaskList) deleteTaskById(id uint) string {
+	task, index := usertl.getTaskById(id)
 
 	if task == nil {
 		return "task doesn't exist"
@@ -71,22 +71,26 @@ func (usertl *UserTaskList) DeleteTaskById(id uint) string {
 
 	usertl.List = assertRemoveTask(usertl.List, index)
 
-	UpdateFile(usertl)
+	updateFile(usertl)
 
 	return fmt.Sprintf("Task deleted successfully (ID: %d)", task.Id)
 }
 
-func (usertl *UserTaskList) UpdateDescriptionTaskById(id uint, newDescription string) string {
-	task, index := usertl.GetTaskById(id)
+func (usertl *UserTaskList) updateDescriptionTaskById(id uint, newDescription string) string {
+	task, index := usertl.getTaskById(id)
+
+	if task == nil {
+		return fmt.Sprintf("Task with ID %d doesn't exist", id)
+	}
 
 	usertl.List[index].Description = newDescription
 
-	UpdateFile(usertl)
+	updateFile(usertl)
 
 	return fmt.Sprintf("Task updated successfully (ID: %d)", task.Id)
 }
 
-func (usertl *UserTaskList) GetAllTasksByStatus(statusId uint) string {
+func (usertl *UserTaskList) getAllTasksByStatus(statusId uint) string {
 	var sb strings.Builder
 	title := fmt.Sprintf("All tasks with status:%s \n", assertStatusByNumber(statusId))
 	sb.WriteString(title)
@@ -102,12 +106,12 @@ func (usertl *UserTaskList) GetAllTasksByStatus(statusId uint) string {
 	return sb.String()
 }
 
-func (usertl *UserTaskList) UpdateStatusTaskInto(id uint, status uint) string {
-	task, index := usertl.GetTaskById(id)
+func (usertl *UserTaskList) updateStatusTaskInto(id uint, status uint) string {
+	task, index := usertl.getTaskById(id)
 
 	usertl.List[index].Status = status
 
-	UpdateFile(usertl)
+	updateFile(usertl)
 
 	return fmt.Sprintf("Task status updated successfully (ID: %d)", task.Id)
 }
