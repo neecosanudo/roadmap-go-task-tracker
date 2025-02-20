@@ -76,7 +76,7 @@ func (usertl *UserTaskList) DeleteTaskById(id uint) string {
 	return fmt.Sprintf("Task deleted successfully (ID: %d)", task.Id)
 }
 
-func (usertl *UserTaskList) UpdateTaskById(id uint, newDescription string) string {
+func (usertl *UserTaskList) UpdateDescriptionTaskById(id uint, newDescription string) string {
 	task, index := usertl.GetTaskById(id)
 
 	usertl.List[index].Description = newDescription
@@ -93,11 +93,23 @@ func (usertl *UserTaskList) GetAllTasksByStatus(statusId uint) string {
 
 	for _, task := range usertl.List {
 		if task.Status == statusId {
-			fmt.Sprintf("Task %d - Description: %s", task.Id, task.Description)
+			sb.WriteString(
+				fmt.Sprintf("Task %d - Description: %s\n", task.Id, task.Description),
+			)
 		}
 	}
 
 	return sb.String()
+}
+
+func (usertl *UserTaskList) UpdateStatusTaskInto(id uint, status uint) string {
+	task, index := usertl.GetTaskById(id)
+
+	usertl.List[index].Status = status
+
+	UpdateFile(usertl)
+
+	return fmt.Sprintf("Task status updated successfully (ID: %d)", task.Id)
 }
 
 func createNewUserTaskList() *UserTaskList {
