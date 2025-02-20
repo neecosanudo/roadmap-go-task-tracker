@@ -1,6 +1,9 @@
 package cli
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Task struct {
 	Id          uint
@@ -25,6 +28,30 @@ func (usertl *UserTaskList) CreateNewTask(description string) string {
 	UpdateFile(usertl)
 
 	return fmt.Sprintf("Task added successfully (ID: %d)", newTask.Id)
+}
+
+func (usertl *UserTaskList) GetAllTasks() string {
+	var sb strings.Builder
+	sb.WriteString("Listing all tasks:\n")
+
+	for _, task := range usertl.List {
+		sb.WriteString(
+			fmt.Sprintf("%d - %s\n", task.Id, task.Description),
+		)
+	}
+
+	return sb.String()
+}
+
+func (usertl *UserTaskList) GetTaskById(id uint) *Task {
+
+	for _, task := range usertl.List {
+		if task.Id == id {
+			return task
+		}
+	}
+
+	return nil
 }
 
 func createNewUserTaskList() *UserTaskList {
