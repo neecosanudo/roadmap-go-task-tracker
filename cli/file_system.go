@@ -2,6 +2,7 @@ package cli
 
 import (
 	"encoding/json"
+	"log"
 	"os"
 )
 
@@ -24,19 +25,39 @@ func CreateFile() error {
 		return nil
 	}
 
-	_, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0644)
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0644)
 
 	if err != nil {
 		return err
 	}
 
-	jsonData, err := json.Marshal(CreateNewUserTaskList())
+	UpdateFile(createNewUserTaskList())
+
+	file.Close()
+	return nil
+}
+
+func UpdateFile(userTaskList *UserTaskList) {
+
+	jsonData, err := json.Marshal(userTaskList)
 
 	if err != nil {
-		return err
+		log.Fatal("can't update file")
 	}
 
 	os.WriteFile(filePath, jsonData, 0664)
+}
 
-	return nil
+func ReadFile() *UserTaskList {
+	file, err := os.ReadFile(filePath)
+
+	if err != nil {
+		log.Fatal("can't read file")
+	}
+
+	data := &UserTaskList{}
+
+	json.Unmarshal(file, data)
+
+	return data
 }
