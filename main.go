@@ -1,24 +1,23 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
+
+	"github.com/neecosanudo/roadmap-go-task-tracker/cli"
 )
 
 func main() {
-	fmt.Println(ReadInput())
-}
-
-func ReadInput() string {
-	reader := bufio.NewReader(os.Stdin)
-
-	input, err := reader.ReadString('\n')
-
-	if err != nil {
-		log.Fatal(err)
+	if err := cli.CreateFile(); err != nil {
+		log.Fatalf("failed to create file: %v", err)
 	}
 
-	return input
+	userTaskList, err := cli.ReadFile()
+	if err != nil {
+		log.Fatalf("failed to read file: %v", err)
+	}
+
+	todo := cli.Reader(userTaskList)
+
+	fmt.Println(todo)
 }
