@@ -2,12 +2,13 @@ package cli
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"os"
 )
 
 const (
-	filePath = "./data/task-list.json"
+	dirPath  = "./data"
+	filePath = dirPath + "/task-list.json"
 )
 
 func isFileExists() bool {
@@ -25,39 +26,49 @@ func CreateFile() error {
 		return nil
 	}
 
-	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0644)
-
+	err := os.MkdirAll(dirPath, os.ModePerm)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
-	updateFile(createNewUserTaskList())
+	file, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+
+	err = updateFile(createNewUserTaskList())
+	if err != nil {
+		return fmt.Errorf("failed to update file: %w", err)
+	}
 
 	file.Close()
 	return nil
 }
 
-func updateFile(userTaskList *UserTaskList) {
-
+func updateFile(userTaskList *UserTaskList) error {
 	jsonData, err := json.Marshal(userTaskList)
 
 	if err != nil {
-		log.Fatal("can't update file")
+		return fmt.Errorf("failed to marshal data: %w", err)
 	}
 
-	os.WriteFile(filePath, jsonData, 0664)
+	return os.WriteFile(filePath, jsonData, 0664)
 }
 
-func ReadFile() *UserTaskList {
+func ReadFile() (*UserTaskList, error) {
 	file, err := os.ReadFile(filePath)
 
 	if err != nil {
-		log.Fatal("can't read file")
+		return nil, fmt.Errorf("failed to read file: %w", err)
 	}
 
 	data := &UserTaskList{}
 
 	err = json.Unmarshal(file, data)
 
-	return data
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal data: %w", err)
+	}
+
+	return data, nil
 }
