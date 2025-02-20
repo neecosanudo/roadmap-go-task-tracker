@@ -5,9 +5,16 @@ import (
 	"strings"
 )
 
+const (
+	STATUS_TO_DO = iota
+	STATUS_IN_PROGRESS
+	STATUS_DONE
+)
+
 type Task struct {
 	Id          uint
 	Description string
+	Status      uint
 }
 
 type UserTaskList struct {
@@ -21,6 +28,7 @@ func (usertl *UserTaskList) CreateNewTask(description string) string {
 	newTask := &Task{
 		Id:          usertl.Counter,
 		Description: description,
+		Status:      STATUS_TO_DO,
 	}
 
 	usertl.List = append(usertl.List, newTask)
@@ -36,7 +44,7 @@ func (usertl *UserTaskList) GetAllTasks() string {
 
 	for _, task := range usertl.List {
 		sb.WriteString(
-			fmt.Sprintf("%d - %s\n", task.Id, task.Description),
+			fmt.Sprintf("Task %d - %s - Status: %s\n", task.Id, task.Description, assertStatusByNumber(task.Status)),
 		)
 	}
 
@@ -78,6 +86,20 @@ func (usertl *UserTaskList) UpdateTaskById(id uint, newDescription string) strin
 	return fmt.Sprintf("Task updated successfully (ID: %d)", task.Id)
 }
 
+func (usertl *UserTaskList) GetAllTasksByStatus(statusId uint) string {
+	var sb strings.Builder
+	title := fmt.Sprintf("All tasks with status:%s \n", assertStatusByNumber(statusId))
+	sb.WriteString(title)
+
+	for _, task := range usertl.List {
+		if task.Status == statusId {
+			fmt.Sprintf("Task %d - Description: %s", task.Id, task.Description)
+		}
+	}
+
+	return sb.String()
+}
+
 func createNewUserTaskList() *UserTaskList {
 	return &UserTaskList{
 		0,
@@ -87,4 +109,15 @@ func createNewUserTaskList() *UserTaskList {
 
 func assertRemoveTask(list []*Task, index int) []*Task {
 	return append(list[:index], list[index+1:]...)
+}
+
+func assertStatusByNumber(number uint) string {
+	switch number {
+	case 1:
+		return "In Progress"
+	case 2:
+		return "Done"
+	default:
+		return "To Do"
+	}
 }
