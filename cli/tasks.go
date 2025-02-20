@@ -43,15 +43,39 @@ func (usertl *UserTaskList) GetAllTasks() string {
 	return sb.String()
 }
 
-func (usertl *UserTaskList) GetTaskById(id uint) *Task {
+func (usertl *UserTaskList) GetTaskById(id uint) (*Task, int) {
 
-	for _, task := range usertl.List {
+	for i, task := range usertl.List {
 		if task.Id == id {
-			return task
+			return task, i
 		}
 	}
 
-	return nil
+	return nil, 0
+}
+
+func (usertl *UserTaskList) DeleteTaskById(id uint) string {
+	task, index := usertl.GetTaskById(id)
+
+	if task == nil {
+		return "task doesn't exist"
+	}
+
+	usertl.List = assertRemoveTask(usertl.List, index)
+
+	UpdateFile(usertl)
+
+	return fmt.Sprintf("Task deleted successfully (ID: %d)", task.Id)
+}
+
+func (usertl *UserTaskList) UpdateTaskById(id uint, newDescription string) string {
+	task, index := usertl.GetTaskById(id)
+
+	usertl.List[index].Description = newDescription
+
+	UpdateFile(usertl)
+
+	return fmt.Sprintf("Task updated successfully (ID: %d)", task.Id)
 }
 
 func createNewUserTaskList() *UserTaskList {
@@ -59,4 +83,8 @@ func createNewUserTaskList() *UserTaskList {
 		0,
 		[]*Task{},
 	}
+}
+
+func assertRemoveTask(list []*Task, index int) []*Task {
+	return append(list[:index], list[index+1:]...)
 }
