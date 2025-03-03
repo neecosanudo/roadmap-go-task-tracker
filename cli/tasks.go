@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"strings"
+	"time"
 )
 
 const (
@@ -15,6 +16,8 @@ type Task struct {
 	Id          uint
 	Description string
 	Status      uint
+	Created_At  time.Time
+	Updated_At  time.Time
 }
 
 type UserTaskList struct {
@@ -24,11 +27,14 @@ type UserTaskList struct {
 
 func (usertl *UserTaskList) createNewTask(description string) string {
 	usertl.Counter++
+	currentDate := time.Now()
 
 	newTask := &Task{
 		Id:          usertl.Counter,
 		Description: description,
 		Status:      STATUS_TO_DO,
+		Created_At:  currentDate,
+		Updated_At:  currentDate,
 	}
 
 	usertl.List = append(usertl.List, newTask)
@@ -84,6 +90,7 @@ func (usertl *UserTaskList) updateDescriptionTaskById(id uint, newDescription st
 	}
 
 	usertl.List[index].Description = newDescription
+	usertl.List[index].Updated_At = time.Now()
 
 	updateFile(usertl)
 
@@ -98,7 +105,7 @@ func (usertl *UserTaskList) getAllTasksByStatus(statusId uint) string {
 	for _, task := range usertl.List {
 		if task.Status == statusId {
 			sb.WriteString(
-				fmt.Sprintf("Task %d - Description: %s\n", task.Id, task.Description),
+				fmt.Sprintf("Task %d\n├ Description: %s\n├ Created at: %s\n└ Updated at: %s", task.Id, task.Description, task.Created_At, task.Updated_At),
 			)
 		}
 	}
@@ -110,6 +117,7 @@ func (usertl *UserTaskList) updateStatusTaskInto(id uint, status uint) string {
 	task, index := usertl.getTaskById(id)
 
 	usertl.List[index].Status = status
+	usertl.List[index].Updated_At = time.Now()
 
 	updateFile(usertl)
 
