@@ -1,12 +1,10 @@
 # Roadmap - Golang Projects: task tracker
 
-## Bitácora del Proyecto
-
 El proyecto nace siguiendo las indicaciones de [roadmap.sh/projects/task-tracker](https://roadmap.sh/projects/task-tracker).
 
 El requerimiento fue implementar un sistema de seguimiento de tareas en la consola, utilizando únicamente la biblioteca estándar de Go.
 
-### Sobre mi proceso
+## Bitácora
 
 Durante el desarrollo del proyecto aprendí y experimenté con varias herramientas de la biblioteca estándar de Go. Empecé utilizando `fmt` para estructurar los mensajes en consola e incorporé `os`  de a poco para gestionar la creación de directorios y archivos JSON, lo cual era requerimiento para la persistencia de datos.
 
